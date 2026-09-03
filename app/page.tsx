@@ -18,6 +18,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 type CardStatus = 'missing' | 'ordered' | 'owned';
 type StatusFilter = CardStatus | 'all';
@@ -57,6 +58,7 @@ export default function Home() {
   const [language, setLanguage] = useState('All');
   const [view, setView] = useState<View>('compact');
   const [sort, setSort] = useState<Sort>('oldest');
+  const [selectedCard, setSelectedCard] = useState<CardRecord | null>(null);
 
   const filteredCards = useMemo(() => {
     const needle = normalize(query);
@@ -157,13 +159,16 @@ export default function Home() {
         </div>
 
         <div className={view === 'cards' ? 'mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3' : 'mt-4 overflow-hidden rounded-2xl border border-rose-950/10 bg-white/80 shadow-sm'}>
-          {filteredCards.map((card) => view === 'cards' ? <CardTile card={card} key={card.id} /> : <CompactRow card={card} key={card.id} />)}
+          {filteredCards.map((card) => view === 'cards'
+            ? <CardTile card={card} key={card.id} onOpen={() => setSelectedCard(card)} />
+            : <CompactRow card={card} key={card.id} onOpen={() => setSelectedCard(card)} />)}
         </div>
 
         {filteredCards.length === 0 && <div className="mt-4 rounded-3xl border border-dashed border-[#d8b7c2] bg-white/60 px-6 py-14 text-center"><Check className="mx-auto size-7 text-[#a45976]" /><p className="mt-3 font-bold text-[#4d2133]">No matching cards</p><p className="mt-1 text-sm text-[#765866]">Try another number, language, or status.</p></div>}
 
         <p className="mx-auto mt-8 max-w-2xl text-center text-xs leading-5 text-[#8a6976]">Images help identify the printing and may show a different language. Match the set, card number, language, and variant before buying. A ×2 badge means two copies are recorded.</p>
       </section>
+      <CardDetails card={selectedCard} onClose={() => setSelectedCard(null)} />
     </main>
   );
 }
@@ -172,9 +177,9 @@ function StatusButton({ active, count, label, onClick }: { active: boolean; coun
   return <Button aria-pressed={active} className="h-12 rounded-xl px-2" onClick={onClick} variant={active ? 'default' : 'ghost'}><span className="truncate">{label}</span><span className="tab-count">{count}</span></Button>;
 }
 
-function CardTile({ card }: { card: CardRecord }) {
+function CardTile({ card, onOpen }: { card: CardRecord; onOpen: () => void }) {
   return (
-    <article className="card-tile">
+    <button aria-label={`View details for ${card.species}, ${card.set_name}, ${card.number}`} className="card-tile" onClick={onOpen} type="button">
       <CardImage card={card} className="card-image" />
       <div className="min-w-0 flex-1">
         <div className="flex items-start justify-between gap-2">
@@ -183,21 +188,56 @@ function CardTile({ card }: { card: CardRecord }) {
         </div>
         <div className="mt-4"><p className="text-sm font-bold text-[#4d2133]">{card.language}</p><p className="mt-0.5 text-xs leading-5 text-[#8a6976]">{card.variant}{card.rarity ? ` · ${card.rarity}` : ''}</p></div>
       </div>
-    </article>
+    </button>
   );
 }
 
-function CompactRow({ card }: { card: CardRecord }) {
+function CompactRow({ card, onOpen }: { card: CardRecord; onOpen: () => void }) {
   return (
-    <article className="compact-row">
+    <button aria-label={`View details for ${card.species}, ${card.set_name}, ${card.number}`} className="compact-row" onClick={onOpen} type="button">
       <CardImage card={card} className="compact-image" />
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2"><p className="truncate text-sm font-bold text-[#4d2133]">{card.set_name}</p><span className="shrink-0 text-sm font-semibold text-[#765866]">{card.number}</span></div>
         <p className="mt-1 truncate text-xs text-[#8a6976]">{card.species} · {card.language} · {card.variant}{card.year ? ` · ${card.year}` : ''}</p>
       </div>
       <div className="flex items-center gap-2"><QuantityBadge quantity={card.quantity} /><StatusBadge status={card.status} /></div>
-    </article>
+    </button>
   );
+}
+
+function CardDetails({ card, onClose }: { card: CardRecord | null; onClose: () => void }) {
+  return (
+    <Dialog open={card !== null} onOpenChange={(open) => { if (!open) onClose(); }}>
+      {card && (
+        <DialogContent className="max-h-[calc(100dvh-1.5rem)] overflow-y-auto rounded-3xl bg-[#fffaf5] p-5 sm:max-w-2xl sm:p-6">
+          <DialogHeader className="pr-9">
+            <div className="flex flex-wrap items-center gap-2"><StatusBadge status={card.status} /><QuantityBadge quantity={card.quantity} /></div>
+            <DialogTitle className="text-2xl font-bold tracking-tight text-[#4d2133]">{card.species}</DialogTitle>
+            <DialogDescription>{card.set_name} · {card.number}</DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-5 sm:grid-cols-[12rem_minmax(0,1fr)]">
+            <CardImage card={card} className="detail-image" />
+            <dl className="detail-list">
+              <Detail label="Set" value={card.set_name} />
+              {card.set_orig && <Detail label="Original set name" value={card.set_orig} />}
+              <Detail label="Number" value={card.number} />
+              <Detail label="Language" value={card.language} />
+              <Detail label="Variant" value={card.variant} />
+              <Detail label="Year" value={card.year ?? 'Unknown'} />
+              <Detail label="Rarity" value={card.rarity ?? 'Unknown'} />
+              <Detail label="Era" value={card.era} />
+              <Detail label="Quantity" value={card.quantity} />
+              <Detail label="Status" value={statusLabel(card.status)} />
+            </dl>
+          </div>
+        </DialogContent>
+      )}
+    </Dialog>
+  );
+}
+
+function Detail({ label, value }: { label: string; value: string | number }) {
+  return <div><dt>{label}</dt><dd>{value}</dd></div>;
 }
 
 function CardImage({ card, className }: { card: CardRecord; className: string }) {
@@ -214,6 +254,12 @@ function StatusBadge({ status }: { status: CardStatus }) {
 function QuantityBadge({ quantity }: { quantity: number }) {
   if (quantity <= 1) return null;
   return <Badge className="quantity-badge">×{quantity}</Badge>;
+}
+
+function statusLabel(status: CardStatus) {
+  if (status === 'missing') return 'Wanted';
+  if (status === 'ordered') return 'On the way';
+  return 'In collection';
 }
 
 function normalize(value: string) {
