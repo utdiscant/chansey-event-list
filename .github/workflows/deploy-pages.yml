@@ -33,6 +33,10 @@ jobs:
           NEXT_PUBLIC_BASE_PATH: /chansey-event-list
           NEXT_PUBLIC_SITE_URL: https://utdiscant.github.io/chansey-event-list/
         run: npm run build
+      - name: Prepare Pages-safe assets
+        env:
+          NEXT_PUBLIC_BASE_PATH: /chansey-event-list
+        run: node scripts/prepare-github-pages.mjs
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist/client
