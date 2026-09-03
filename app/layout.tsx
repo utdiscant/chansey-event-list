@@ -4,6 +4,8 @@ import './globals.css';
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://chansey-event-list.einarsvej-94-4436.chatgpt.site/';
 const socialImageUrl = new URL('og.png', siteUrl).toString();
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
+const faviconUrl = `${basePath}/cards/base1-3.jpg`;
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -19,6 +21,11 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: 'Chansey Event List',
   description: 'A pocket checklist for the Chansey evolution-line collection.',
+  icons: {
+    icon: [{ url: faviconUrl, type: 'image/jpeg' }],
+    shortcut: faviconUrl,
+    apple: faviconUrl,
+  },
   alternates: { canonical: siteUrl },
   openGraph: {
     title: 'Chansey Event List',
