@@ -24,7 +24,7 @@ type CardStatus = 'missing' | 'ordered' | 'owned';
 type StatusFilter = CardStatus | 'all';
 type SpeciesFilter = 'All' | 'Chansey' | 'Happiny' | 'Blissey';
 type View = 'cards' | 'compact';
-type Sort = 'oldest' | 'newest' | 'set';
+type Sort = 'oldest' | 'newest' | 'set' | 'binder';
 
 type CardRecord = {
   id: number;
@@ -40,6 +40,9 @@ type CardRecord = {
   status: CardStatus;
   quantity: number;
   ordered_quantity: number;
+  binder_page: number | null;
+  binder_slot: number | null;
+  binder_index: number | null;
   image: string | null;
 };
 
@@ -141,6 +144,7 @@ export default function Home() {
               <NativeSelectOption value="oldest">Oldest first</NativeSelectOption>
               <NativeSelectOption value="newest">Newest first</NativeSelectOption>
               <NativeSelectOption value="set">Set name</NativeSelectOption>
+              <NativeSelectOption value="binder">Binder order</NativeSelectOption>
             </NativeSelect>
           </label>
         </div>
@@ -188,7 +192,7 @@ function CardTile({ card, onOpen }: { card: CardRecord; onOpen: () => void }) {
           <div><p className="text-xs font-bold uppercase tracking-[0.09em] text-[#a04a6b]">{card.species} · {card.year ?? 'Year unknown'}</p><h3 className="mt-1 font-bold leading-tight text-[#4d2133]">{card.set_name}</h3><p className="mt-1 text-sm font-semibold text-[#765866]">{card.number}</p></div>
           <div className="flex shrink-0 flex-col items-end gap-1"><QuantityBadge quantity={card.quantity} /><StatusBadge status={card.status} /><TransitBadge card={card} /></div>
         </div>
-        <div className="mt-4"><p className="text-sm font-bold text-[#4d2133]">{card.language}</p><p className="mt-0.5 text-xs leading-5 text-[#8a6976]">{card.variant}{card.rarity ? ` · ${card.rarity}` : ''}</p></div>
+        <div className="mt-4"><p className="text-sm font-bold text-[#4d2133]">{card.language}</p><p className="mt-0.5 text-xs leading-5 text-[#8a6976]">{card.variant}{card.rarity ? ` · ${card.rarity}` : ''}</p><BinderPlacement card={card} /></div>
       </div>
     </button>
   );
@@ -200,7 +204,7 @@ function CompactRow({ card, onOpen }: { card: CardRecord; onOpen: () => void }) 
       <CardImage card={card} className="compact-image" />
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2"><p className="truncate text-sm font-bold text-[#4d2133]">{card.set_name}</p><span className="shrink-0 text-sm font-semibold text-[#765866]">{card.number}</span></div>
-        <p className="mt-1 truncate text-xs text-[#8a6976]">{card.species} · {card.language} · {card.variant}{card.year ? ` · ${card.year}` : ''}</p>
+        <p className="mt-1 truncate text-xs text-[#8a6976]">{card.species} · {card.language} · {card.variant}{card.year ? ` · ${card.year}` : ''}{card.binder_page ? ` · Binder p${card.binder_page}/s${card.binder_slot}` : ''}</p>
       </div>
       <div className="flex items-center gap-2"><QuantityBadge quantity={card.quantity} /><StatusBadge status={card.status} /><TransitBadge card={card} /></div>
     </button>
@@ -231,6 +235,7 @@ function CardDetails({ card, onClose }: { card: CardRecord | null; onClose: () =
               <Detail label="Owned copies" value={card.quantity} />
               <Detail label="On the way" value={card.ordered_quantity} />
               <Detail label="Status" value={statusLabel(card.status)} />
+              <Detail label="Binder placement" value={binderLabel(card)} />
             </dl>
           </div>
         </DialogContent>
@@ -241,6 +246,16 @@ function CardDetails({ card, onClose }: { card: CardRecord | null; onClose: () =
 
 function Detail({ label, value }: { label: string; value: string | number }) {
   return <div><dt>{label}</dt><dd>{value}</dd></div>;
+}
+
+function BinderPlacement({ card }: { card: CardRecord }) {
+  if (!card.binder_page) return null;
+  return <p className="mt-1 text-xs font-semibold text-[#9f3f65]">Binder · page {card.binder_page}, slot {card.binder_slot}</p>;
+}
+
+function binderLabel(card: CardRecord) {
+  if (!card.binder_page) return 'Not assigned';
+  return `Page ${card.binder_page}, slot ${card.binder_slot}`;
 }
 
 function CardImage({ card, className }: { card: CardRecord; className: string }) {
@@ -282,11 +297,12 @@ function normalize(value: string) {
 }
 
 function searchableText(card: CardRecord) {
-  return normalize([card.species, card.language, card.set_name, card.set_orig, card.number, card.variant, card.year, card.rarity, card.era].filter(Boolean).join(' '));
+  return normalize([card.species, card.language, card.set_name, card.set_orig, card.number, card.variant, card.year, card.rarity, card.era, card.binder_page && `binder page ${card.binder_page} slot ${card.binder_slot}`].filter(Boolean).join(' '));
 }
 
 function compareCards(a: CardRecord, b: CardRecord, sort: Sort) {
   if (sort === 'set') return a.set_name.localeCompare(b.set_name) || a.number.localeCompare(b.number) || a.language.localeCompare(b.language);
+  if (sort === 'binder') return (a.binder_index ?? Number.MAX_SAFE_INTEGER) - (b.binder_index ?? Number.MAX_SAFE_INTEGER) || compareCards(a, b, 'oldest');
   const direction = sort === 'newest' ? -1 : 1;
   return direction * ((a.year ?? 0) - (b.year ?? 0)) || a.set_name.localeCompare(b.set_name) || a.number.localeCompare(b.number) || a.language.localeCompare(b.language);
 }

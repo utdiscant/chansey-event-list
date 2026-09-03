@@ -23,7 +23,8 @@ def main() -> None:
     rows = connection.execute(
         """
         SELECT id, species, language, set_name, set_orig, number, variant,
-               year, rarity, era, image_key, status, quantity, ordered_quantity
+               year, rarity, era, image_key, status, quantity, ordered_quantity,
+               binder_page, binder_slot, binder_index
         FROM card_full
         ORDER BY CASE species WHEN 'Chansey' THEN 1 WHEN 'Happiny' THEN 2 ELSE 3 END,
                  year, set_name, number, language, variant
