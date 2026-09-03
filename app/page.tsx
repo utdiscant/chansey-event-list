@@ -39,15 +39,17 @@ type CardRecord = {
   era: string;
   status: CardStatus;
   quantity: number;
+  ordered_quantity: number;
   image: string | null;
 };
 
 const cards = cardsJson as CardRecord[];
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
-const statusCounts = cards.reduce(
-  (counts, card) => ({ ...counts, [card.status]: counts[card.status] + 1 }),
-  { missing: 0, ordered: 0, owned: 0 },
-);
+const statusCounts = {
+  missing: cards.filter((card) => card.quantity === 0 && card.ordered_quantity === 0).length,
+  ordered: cards.filter((card) => card.ordered_quantity > 0).length,
+  owned: cards.filter((card) => card.quantity > 0).length,
+};
 const languages = Array.from(new Set(cards.map((card) => card.language))).sort();
 const speciesOptions: SpeciesFilter[] = ['All', 'Chansey', 'Happiny', 'Blissey'];
 
@@ -63,7 +65,7 @@ export default function Home() {
   const filteredCards = useMemo(() => {
     const needle = normalize(query);
     return cards
-      .filter((card) => status === 'all' || card.status === status)
+      .filter((card) => matchesStatus(card, status))
       .filter((card) => species === 'All' || card.species === species)
       .filter((card) => language === 'All' || card.language === language)
       .filter((card) => !needle || searchableText(card).includes(needle))
@@ -184,7 +186,7 @@ function CardTile({ card, onOpen }: { card: CardRecord; onOpen: () => void }) {
       <div className="min-w-0 flex-1">
         <div className="flex items-start justify-between gap-2">
           <div><p className="text-xs font-bold uppercase tracking-[0.09em] text-[#a04a6b]">{card.species} · {card.year ?? 'Year unknown'}</p><h3 className="mt-1 font-bold leading-tight text-[#4d2133]">{card.set_name}</h3><p className="mt-1 text-sm font-semibold text-[#765866]">{card.number}</p></div>
-          <div className="flex shrink-0 flex-col items-end gap-1"><QuantityBadge quantity={card.quantity} /><StatusBadge status={card.status} /></div>
+          <div className="flex shrink-0 flex-col items-end gap-1"><QuantityBadge quantity={card.quantity} /><StatusBadge status={card.status} /><TransitBadge card={card} /></div>
         </div>
         <div className="mt-4"><p className="text-sm font-bold text-[#4d2133]">{card.language}</p><p className="mt-0.5 text-xs leading-5 text-[#8a6976]">{card.variant}{card.rarity ? ` · ${card.rarity}` : ''}</p></div>
       </div>
@@ -200,7 +202,7 @@ function CompactRow({ card, onOpen }: { card: CardRecord; onOpen: () => void }) 
         <div className="flex items-center gap-2"><p className="truncate text-sm font-bold text-[#4d2133]">{card.set_name}</p><span className="shrink-0 text-sm font-semibold text-[#765866]">{card.number}</span></div>
         <p className="mt-1 truncate text-xs text-[#8a6976]">{card.species} · {card.language} · {card.variant}{card.year ? ` · ${card.year}` : ''}</p>
       </div>
-      <div className="flex items-center gap-2"><QuantityBadge quantity={card.quantity} /><StatusBadge status={card.status} /></div>
+      <div className="flex items-center gap-2"><QuantityBadge quantity={card.quantity} /><StatusBadge status={card.status} /><TransitBadge card={card} /></div>
     </button>
   );
 }
@@ -211,7 +213,7 @@ function CardDetails({ card, onClose }: { card: CardRecord | null; onClose: () =
       {card && (
         <DialogContent className="max-h-[calc(100dvh-1.5rem)] overflow-y-auto rounded-3xl bg-[#fffaf5] p-5 sm:max-w-2xl sm:p-6">
           <DialogHeader className="pr-9">
-            <div className="flex flex-wrap items-center gap-2"><StatusBadge status={card.status} /><QuantityBadge quantity={card.quantity} /></div>
+            <div className="flex flex-wrap items-center gap-2"><StatusBadge status={card.status} /><QuantityBadge quantity={card.quantity} /><TransitBadge card={card} /></div>
             <DialogTitle className="text-2xl font-bold tracking-tight text-[#4d2133]">{card.species}</DialogTitle>
             <DialogDescription>{card.set_name} · {card.number}</DialogDescription>
           </DialogHeader>
@@ -226,7 +228,8 @@ function CardDetails({ card, onClose }: { card: CardRecord | null; onClose: () =
               <Detail label="Year" value={card.year ?? 'Unknown'} />
               <Detail label="Rarity" value={card.rarity ?? 'Unknown'} />
               <Detail label="Era" value={card.era} />
-              <Detail label="Quantity" value={card.quantity} />
+              <Detail label="Owned copies" value={card.quantity} />
+              <Detail label="On the way" value={card.ordered_quantity} />
               <Detail label="Status" value={statusLabel(card.status)} />
             </dl>
           </div>
@@ -254,6 +257,18 @@ function StatusBadge({ status }: { status: CardStatus }) {
 function QuantityBadge({ quantity }: { quantity: number }) {
   if (quantity <= 1) return null;
   return <Badge className="quantity-badge">×{quantity}</Badge>;
+}
+
+function TransitBadge({ card }: { card: CardRecord }) {
+  if (card.quantity === 0 || card.ordered_quantity === 0) return null;
+  return <Badge className="status-ordered">{card.ordered_quantity} on way</Badge>;
+}
+
+function matchesStatus(card: CardRecord, status: StatusFilter) {
+  if (status === 'all') return true;
+  if (status === 'owned') return card.quantity > 0;
+  if (status === 'ordered') return card.ordered_quantity > 0;
+  return card.quantity === 0 && card.ordered_quantity === 0;
 }
 
 function statusLabel(status: CardStatus) {
