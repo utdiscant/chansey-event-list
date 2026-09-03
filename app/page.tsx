@@ -41,6 +41,7 @@ type CardRecord = {
 };
 
 const cards = cardsJson as CardRecord[];
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
 const statusCounts = cards.reduce(
   (counts, card) => ({ ...counts, [card.status]: counts[card.status] + 1 }),
   { missing: 0, ordered: 0, owned: 0 },
@@ -200,7 +201,7 @@ function CompactRow({ card }: { card: CardRecord }) {
 
 function CardImage({ card, className }: { card: CardRecord; className: string }) {
   if (!card.image) return <div aria-label="No card image available" className={`${className} image-placeholder`}><ImageOff /></div>;
-  return <img alt={`${card.species}, ${card.set_name}, ${card.number}`} className={className} loading="lazy" src={card.image} />;
+  return <img alt={`${card.species}, ${card.set_name}, ${card.number}`} className={className} loading="lazy" src={`${basePath}${card.image}`} />;
 }
 
 function StatusBadge({ status }: { status: CardStatus }) {
