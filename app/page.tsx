@@ -83,7 +83,7 @@ export default function Home() {
         <div className="mx-auto max-w-6xl px-4 pb-5 pt-6 sm:px-6">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="eyebrow">Pocket checklist · Updated 2 Sep 2026</p>
+              <p className="eyebrow">Pocket checklist · Updated 3 Sep 2026</p>
               <h1 className="mt-1 font-heading text-3xl font-bold tracking-[-0.04em] text-[#4d2133] sm:text-4xl">Chansey Event List</h1>
               <p className="mt-2 max-w-xl text-sm leading-6 text-[#765866]">Show vendors what you need. Search any card to see whether it is wanted, on the way, or already yours.</p>
             </div>
