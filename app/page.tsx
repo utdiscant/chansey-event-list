@@ -37,6 +37,7 @@ type CardRecord = {
   rarity: string | null;
   era: string;
   status: CardStatus;
+  quantity: number;
   image: string | null;
 };
 
@@ -161,7 +162,7 @@ export default function Home() {
 
         {filteredCards.length === 0 && <div className="mt-4 rounded-3xl border border-dashed border-[#d8b7c2] bg-white/60 px-6 py-14 text-center"><Check className="mx-auto size-7 text-[#a45976]" /><p className="mt-3 font-bold text-[#4d2133]">No matching cards</p><p className="mt-1 text-sm text-[#765866]">Try another number, language, or status.</p></div>}
 
-        <p className="mx-auto mt-8 max-w-2xl text-center text-xs leading-5 text-[#8a6976]">Images help identify the printing and may show a different language. Match the set, card number, language, and variant before buying.</p>
+        <p className="mx-auto mt-8 max-w-2xl text-center text-xs leading-5 text-[#8a6976]">Images help identify the printing and may show a different language. Match the set, card number, language, and variant before buying. A ×2 badge means two copies are recorded.</p>
       </section>
     </main>
   );
@@ -178,7 +179,7 @@ function CardTile({ card }: { card: CardRecord }) {
       <div className="min-w-0 flex-1">
         <div className="flex items-start justify-between gap-2">
           <div><p className="text-xs font-bold uppercase tracking-[0.09em] text-[#a04a6b]">{card.species} · {card.year ?? 'Year unknown'}</p><h3 className="mt-1 font-bold leading-tight text-[#4d2133]">{card.set_name}</h3><p className="mt-1 text-sm font-semibold text-[#765866]">{card.number}</p></div>
-          <StatusBadge status={card.status} />
+          <div className="flex shrink-0 flex-col items-end gap-1"><QuantityBadge quantity={card.quantity} /><StatusBadge status={card.status} /></div>
         </div>
         <div className="mt-4"><p className="text-sm font-bold text-[#4d2133]">{card.language}</p><p className="mt-0.5 text-xs leading-5 text-[#8a6976]">{card.variant}{card.rarity ? ` · ${card.rarity}` : ''}</p></div>
       </div>
@@ -194,7 +195,7 @@ function CompactRow({ card }: { card: CardRecord }) {
         <div className="flex items-center gap-2"><p className="truncate text-sm font-bold text-[#4d2133]">{card.set_name}</p><span className="shrink-0 text-sm font-semibold text-[#765866]">{card.number}</span></div>
         <p className="mt-1 truncate text-xs text-[#8a6976]">{card.species} · {card.language} · {card.variant}{card.year ? ` · ${card.year}` : ''}</p>
       </div>
-      <StatusBadge status={card.status} />
+      <div className="flex items-center gap-2"><QuantityBadge quantity={card.quantity} /><StatusBadge status={card.status} /></div>
     </article>
   );
 }
@@ -208,6 +209,11 @@ function StatusBadge({ status }: { status: CardStatus }) {
   if (status === 'missing') return <Badge className="status-wanted">Wanted</Badge>;
   if (status === 'ordered') return <Badge className="status-ordered"><PackageCheck data-icon="inline-start" /><span className="badge-wide">On the way</span><span className="badge-short">Ordered</span></Badge>;
   return <Badge className="status-owned"><CheckCircle2 data-icon="inline-start" /><span className="badge-wide">In collection</span><span className="badge-short">Owned</span></Badge>;
+}
+
+function QuantityBadge({ quantity }: { quantity: number }) {
+  if (quantity <= 1) return null;
+  return <Badge className="quantity-badge">×{quantity}</Badge>;
 }
 
 function normalize(value: string) {

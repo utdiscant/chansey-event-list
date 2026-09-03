@@ -68,6 +68,7 @@ button, input { touch-action: manipulation; }
 .status-wanted { background: #ffe0ea; color: #8d2f55; }
 .status-ordered { background: #fff0c8; color: #765311; }
 .status-owned { background: #dcefe5; color: #246247; }
+.quantity-badge { background: #eee2f6; color: #663c7a; }
 .badge-short { display: none; }
 @media (max-width: 760px) { .filter-panel { grid-template-columns: 1fr 1fr; } .filter-panel > div:first-child { grid-column: 1 / -1; } .status-tabs { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 420px) { .tab-count, .badge-wide { display: none; } .badge-short { display: inline; } .compact-row { grid-template-columns: 2.45rem minmax(0, 1fr) auto; gap: 0.65rem; padding-inline: 0.65rem; } .compact-image { width: 2.45rem; height: 3.4rem; } .filter-panel { grid-template-columns: 1fr; } .filter-panel > div:first-child { grid-column: auto; } }
