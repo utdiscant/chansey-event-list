@@ -25,7 +25,8 @@ def main() -> None:
         SELECT id, species, language, set_name, set_orig, number, variant,
                year, rarity, era, image_key, status, quantity, ordered_quantity,
                binder_page, binder_slot, binder_index,
-               (SELECT grade FROM card_public_grade g WHERE g.card_id=card_full.id) AS grade
+               (SELECT grade FROM card_public_grade g WHERE g.card_id=card_full.id) AS grade,
+               (SELECT description FROM card_cameo c WHERE c.card_id=card_full.id) AS cameo
         FROM card_full
         ORDER BY CASE species WHEN 'Chansey' THEN 1 WHEN 'Happiny' THEN 2 ELSE 3 END,
                  year, set_name, number, language, variant

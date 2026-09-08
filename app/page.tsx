@@ -22,13 +22,14 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 
 type CardStatus = 'missing' | 'ordered' | 'owned';
 type StatusFilter = CardStatus | 'all';
-type SpeciesFilter = 'All' | 'Chansey' | 'Happiny' | 'Blissey';
+type SpeciesFilter = 'All' | 'Chansey' | 'Happiny' | 'Blissey' | 'Cameos';
 type View = 'cards' | 'compact';
 type Sort = 'oldest' | 'newest' | 'set' | 'binder';
 
 type CardRecord = {
   id: number;
-  species: Exclude<SpeciesFilter, 'All'>;
+  species: string;
+  cameo?: string | null;
   language: string;
   set_name: string;
   set_orig: string | null;
@@ -55,7 +56,7 @@ const statusCounts = {
   owned: cards.filter((card) => card.quantity > 0).length,
 };
 const languages = Array.from(new Set(cards.map((card) => card.language))).sort();
-const speciesOptions: SpeciesFilter[] = ['All', 'Chansey', 'Happiny', 'Blissey'];
+const speciesOptions: SpeciesFilter[] = ['All', 'Chansey', 'Happiny', 'Blissey', 'Cameos'];
 
 export default function Home() {
   const [query, setQuery] = useState('');
@@ -70,7 +71,7 @@ export default function Home() {
     const needle = normalize(query);
     return cards
       .filter((card) => matchesStatus(card, status))
-      .filter((card) => species === 'All' || card.species === species)
+      .filter((card) => species === 'All' || (species === 'Cameos' ? Boolean(card.cameo) : card.species === species))
       .filter((card) => language === 'All' || card.language === language)
       .filter((card) => !needle || searchableText(card).includes(needle))
       .sort((a, b) => compareCards(a, b, sort));
@@ -93,7 +94,7 @@ export default function Home() {
         <div className="mx-auto max-w-6xl px-4 pb-5 pt-6 sm:px-6">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="eyebrow">Pocket checklist · Updated 3 Sep 2026</p>
+              <p className="eyebrow">Pocket checklist · Updated 8 Sep 2026</p>
               <h1 className="mt-1 font-heading text-3xl font-bold tracking-[-0.04em] text-[#4d2133] sm:text-4xl">Chansey Event List</h1>
               <p className="mt-2 max-w-xl text-sm leading-6 text-[#765866]">Show vendors what you need. Search any card to see whether it is wanted, on the way, or already yours.</p>
             </div>
@@ -130,6 +131,7 @@ export default function Home() {
             <p className="filter-label">Pokémon</p>
             <div className="mt-2 flex flex-wrap gap-2">
               {speciesOptions.map((option) => <Button className="rounded-full" key={option} onClick={() => setSpecies(option)} size="sm" variant={species === option ? 'default' : 'outline'}>{option}</Button>)}
+              {species === 'Cameos' && <p className="text-sm text-[#765866]">Confirmed starter checklist. Other languages and No. 1/No. 2 Trainer trophy variants are still being researched. Blissey V uses its existing collection records.</p>}
             </div>
           </div>
           <label>
@@ -230,6 +232,7 @@ function CardDetails({ card, onClose }: { card: CardRecord | null; onClose: () =
               <Detail label="Number" value={card.number} />
               <Detail label="Language" value={card.language} />
               <Detail label="Variant" value={card.variant} />
+              {card.cameo && <Detail label="Chansey cameo" value={card.cameo} />}
               {card.grade && <Detail label="Grade" value={card.grade} />}
               <Detail label="Year" value={card.year ?? 'Unknown'} />
               <Detail label="Rarity" value={card.rarity ?? 'Unknown'} />
