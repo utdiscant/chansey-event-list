@@ -71,7 +71,7 @@ export default function Home() {
     const needle = normalize(query);
     return cards
       .filter((card) => matchesStatus(card, status))
-      .filter((card) => species === 'All' || (species === 'Cameos' ? Boolean(card.cameo) : card.species === species))
+      .filter((card) => species === 'All' || (species === 'Cameos' ? Boolean(card.cameo) && card.species !== 'Blissey' : card.species === species))
       .filter((card) => language === 'All' || card.language === language)
       .filter((card) => !needle || searchableText(card).includes(needle))
       .sort((a, b) => compareCards(a, b, sort));
@@ -131,7 +131,7 @@ export default function Home() {
             <p className="filter-label">Pokémon</p>
             <div className="mt-2 flex flex-wrap gap-2">
               {speciesOptions.map((option) => <Button className="rounded-full" key={option} onClick={() => setSpecies(option)} size="sm" variant={species === option ? 'default' : 'outline'}>{option}</Button>)}
-              {species === 'Cameos' && <p className="text-sm text-[#765866]">Verified regional printings and 19 trophy event/design categories. Personalised trophies and some regional variants remain unresolved. Blissey V uses its existing records. <a className="underline" href="./cameo-coverage.md" target="_blank" rel="noreferrer">Coverage and open questions</a></p>}
+              {species === 'Cameos' && <p className="text-sm text-[#765866]">Verified regional printings and 19 trophy event/design categories. Personalised trophies and some regional variants remain unresolved. Blissey cards are listed under Blissey, not Cameos. <a className="underline" href="./cameo-coverage.md" target="_blank" rel="noreferrer">Coverage and open questions</a></p>}
             </div>
           </div>
           <label>

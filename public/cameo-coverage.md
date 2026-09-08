@@ -1,6 +1,6 @@
 # Chansey cameo coverage
 
-Checked 8 September 2026. This is an evidence-backed checklist, not a claim that every printing has been found. All new entries are wanted, not purchased. Blissey V entries reuse the main collection records.
+Checked 8 September 2026. This is an evidence-backed checklist, not a claim that every printing has been found. All new entries are wanted, not purchased. Blissey cards belong under Blissey, not Cameos; their Chansey artwork notes and collection records are preserved.
 
 ## Trophy scope
 
@@ -15,16 +15,15 @@ Evidence: [winner/design research](https://www.elitefourum.com/t/exact-number-of
 | Artwork | Regions represented |
 | --- | --- |
 | Pokémon Center Lady, TOKIYA | English normal/reverse; German, Italian and Spanish normal/reverse; French normal; two Japanese decks; Traditional Chinese, Simplified Chinese and Indonesian |
-| Blissey V alternate art | English, French, German, Italian, Spanish, Portuguese, Japanese, Korean, Traditional Chinese, Simplified Chinese and Indonesian |
 
 Excadrill and Team Rocket’s Wobbuffet are excluded in every language and variant. Tiny packaging pictures are outside this collection's cameo scope. Different artwork on another printing of the same card does not qualify automatically.
 
-Regional evidence includes the official catalogues for [Indonesian Pokémon Center Lady](https://asia.pokemon-card.com/id/card-search/detail/2160/) and [Traditional Chinese Pokémon Center Lady](https://asia.pokemon-card.com/hk/card-search/detail/3476/), plus [Simplified Chinese Blissey V](https://wiki.52poke.com/wiki/幸福蛋V（S6K）). Other rows retain their individual catalogue/offer evidence in the private ledger.
+Regional evidence includes the official catalogues for [Indonesian Pokémon Center Lady](https://asia.pokemon-card.com/id/card-search/detail/2160/) and [Traditional Chinese Pokémon Center Lady](https://asia.pokemon-card.com/hk/card-search/detail/3476/). Other rows retain their individual catalogue/offer evidence in the private ledger.
 
 ## Still open
 
 - Personalised trophy names/venues and no-name specimens, including their provenance.
-- Thai Blissey V alternate art and other Thai TOKIYA deck printings.
+- Thai TOKIYA Pokémon Center Lady deck printings.
 - French reverse and Portuguese TOKIYA Pokémon Center Lady printings.
 - Separate Latin American Spanish releases, regional stamps, deck finishes and other regional production differences.
 - Russian physical-print evidence. A translated checklist PDF alone does not establish that cards were printed.
