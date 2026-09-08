@@ -24,7 +24,7 @@ type CardStatus = 'missing' | 'ordered' | 'owned';
 type StatusFilter = CardStatus | 'all';
 type SpeciesFilter = 'All' | 'Chansey' | 'Happiny' | 'Blissey' | 'Cameos';
 type View = 'cards' | 'compact';
-type Sort = 'oldest' | 'newest' | 'set' | 'binder';
+type Sort = 'oldest' | 'newest' | 'set' | 'binder' | 'price-asc' | 'price-desc';
 
 type PriceEstimate = {
   low_eur: number | null; high_eur: number | null;
@@ -156,7 +156,10 @@ export default function Home() {
               <NativeSelectOption value="newest">Newest first</NativeSelectOption>
               <NativeSelectOption value="set">Set name</NativeSelectOption>
               <NativeSelectOption value="binder">Binder order</NativeSelectOption>
+              <NativeSelectOption value="price-asc">Fair price: low to high</NativeSelectOption>
+              <NativeSelectOption value="price-desc">Fair price: high to low</NativeSelectOption>
             </NativeSelect>
+            {sort.startsWith('price-') && <p className="mt-2 text-xs text-muted-foreground">Sorted by the range midpoint. Unpriced cards stay last.</p>}
           </label>
         </div>
 
@@ -342,10 +345,19 @@ function searchableText(card: CardRecord) {
 }
 
 function compareCards(a: CardRecord, b: CardRecord, sort: Sort): number {
+  if (sort === 'price-asc' || sort === 'price-desc') {
+    const av = priceMidpoint(a.price_estimate), bv = priceMidpoint(b.price_estimate);
+    if (av === null || bv === null) return av === bv ? compareCards(a, b, 'oldest') : av === null ? 1 : -1;
+    return (sort === 'price-asc' ? av - bv : bv - av) || compareCards(a, b, 'oldest');
+  }
   if (sort === 'set') return a.set_name.localeCompare(b.set_name) || a.number.localeCompare(b.number) || a.language.localeCompare(b.language);
   if (sort === 'binder') return (a.binder_index ?? Number.MAX_SAFE_INTEGER) - (b.binder_index ?? Number.MAX_SAFE_INTEGER) || compareCards(a, b, 'oldest');
   const direction = sort === 'newest' ? -1 : 1;
   return direction * ((a.year ?? 0) - (b.year ?? 0)) || a.set_name.localeCompare(b.set_name) || a.number.localeCompare(b.number) || a.language.localeCompare(b.language);
+}
+
+function priceMidpoint(estimate?: PriceEstimate): number | null {
+  return estimate?.low_dkk != null && estimate.high_dkk != null ? (estimate.low_dkk + estimate.high_dkk) / 2 : null;
 }
 
 function headingFor(status: StatusFilter) {
