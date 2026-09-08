@@ -14,20 +14,17 @@ Evidence: [winner/design research](https://www.elitefourum.com/t/exact-number-of
 
 | Artwork | Regions represented |
 | --- | --- |
-| Excadrill illustration | English, French, German, Italian, Spanish, Portuguese, Japanese, Korean, Traditional Chinese, Indonesian and Simplified Chinese Gem Pack 4 |
-| Team Rocket’s Wobbuffet illustration | English, French, German, Italian, Spanish, Portuguese, Japanese, Korean, Traditional Chinese, Indonesian and Thai; English Pokémon Center stamp separately |
 | Pokémon Center Lady, TOKIYA | English normal/reverse; German, Italian and Spanish normal/reverse; French normal; two Japanese decks; Traditional Chinese, Simplified Chinese and Indonesian |
 | Blissey V alternate art | English, French, German, Italian, Spanish, Portuguese, Japanese, Korean, Traditional Chinese, Simplified Chinese and Indonesian |
 
-Different artwork on another printing of the same card does not qualify automatically. Gem Pack 4 Excadrill 1407/07 qualifies; ordinary-art versions do not.
+Excadrill and Team Rocket’s Wobbuffet are excluded in every language and variant. Tiny packaging pictures are outside this collection's cameo scope. Different artwork on another printing of the same card does not qualify automatically.
 
-Regional evidence includes the official catalogues for [Traditional Chinese Excadrill](https://asia.pokemon-card.com/tw/card-search/detail/10228/), [Indonesian Excadrill](https://asia.pokemon-card.com/id/card-search/detail/10579/), [Indonesian Wobbuffet](https://asia.pokemon-card.com/id/card-search/detail/16098/), [Thai Wobbuffet](https://asia.pokemon-card.com/th/card-search/detail/11616/), [Indonesian Pokémon Center Lady](https://asia.pokemon-card.com/id/card-search/detail/2160/) and [Traditional Chinese Pokémon Center Lady](https://asia.pokemon-card.com/hk/card-search/detail/3476/). Simplified Chinese artwork mapping: [Excadrill](https://wiki.52poke.com/wiki/龙头地鼠（SV5M）), [Blissey V](https://wiki.52poke.com/wiki/幸福蛋V（S6K）). Other rows retain their individual catalogue/offer evidence in the private ledger.
+Regional evidence includes the official catalogues for [Indonesian Pokémon Center Lady](https://asia.pokemon-card.com/id/card-search/detail/2160/) and [Traditional Chinese Pokémon Center Lady](https://asia.pokemon-card.com/hk/card-search/detail/3476/), plus [Simplified Chinese Blissey V](https://wiki.52poke.com/wiki/幸福蛋V（S6K）). Other rows retain their individual catalogue/offer evidence in the private ledger.
 
 ## Still open
 
 - Personalised trophy names/venues and no-name specimens, including their provenance.
-- Thai Excadrill and Blissey V alternate art; other Thai TOKIYA deck printings.
-- Simplified Chinese Wobbuffet illustration and later regional reprints.
+- Thai Blissey V alternate art and other Thai TOKIYA deck printings.
 - French reverse and Portuguese TOKIYA Pokémon Center Lady printings.
 - Separate Latin American Spanish releases, regional stamps, deck finishes and other regional production differences.
 - Russian physical-print evidence. A translated checklist PDF alone does not establish that cards were printed.
