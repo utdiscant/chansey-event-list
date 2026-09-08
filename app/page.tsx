@@ -175,7 +175,7 @@ export default function Home() {
 
         {filteredCards.length === 0 && <div className="mt-4 rounded-3xl border border-dashed border-[#d8b7c2] bg-white/60 px-6 py-14 text-center"><Check className="mx-auto size-7 text-[#a45976]" /><p className="mt-3 font-bold text-[#4d2133]">No matching cards</p><p className="mt-1 text-sm text-[#765866]">Try another number, language, or status.</p></div>}
 
-        <p className="mx-auto mt-8 max-w-2xl text-center text-xs leading-5 text-[#8a6976]">Images help identify the printing and may show a different language. Match the set, card number, language, and variant before buying. A ×2 badge means two copies are recorded.</p>
+        <p className="mx-auto mt-8 max-w-2xl text-center text-xs leading-5 text-[#8a6976]">Images are reference pictures and may show a different language or finish. Match the set, card number, language, stamp, and variant before buying. Trophy pictures show a representative winner’s copy. A ×2 badge means two copies are recorded.</p>
       </section>
       <CardDetails card={selectedCard} onClose={() => setSelectedCard(null)} />
     </main>

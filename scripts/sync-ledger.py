@@ -23,7 +23,9 @@ def main() -> None:
     rows = connection.execute(
         """
         SELECT id, species, language, set_name, set_orig, number, variant,
-               year, rarity, era, image_key, status, quantity, ordered_quantity,
+               year, rarity, era,
+               COALESCE((SELECT image_key FROM card_image i WHERE i.card_id=card_full.id), image_key) AS image_key,
+               status, quantity, ordered_quantity,
                binder_page, binder_slot, binder_index,
                (SELECT grade FROM card_public_grade g WHERE g.card_id=card_full.id) AS grade,
                (SELECT description FROM card_cameo c WHERE c.card_id=card_full.id) AS cameo
