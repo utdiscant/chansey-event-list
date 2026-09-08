@@ -34,6 +34,7 @@ type CardRecord = {
   set_orig: string | null;
   number: string;
   variant: string;
+  grade?: string | null;
   year: number | null;
   rarity: string | null;
   era: string;
@@ -229,6 +230,7 @@ function CardDetails({ card, onClose }: { card: CardRecord | null; onClose: () =
               <Detail label="Number" value={card.number} />
               <Detail label="Language" value={card.language} />
               <Detail label="Variant" value={card.variant} />
+              {card.grade && <Detail label="Grade" value={card.grade} />}
               <Detail label="Year" value={card.year ?? 'Unknown'} />
               <Detail label="Rarity" value={card.rarity ?? 'Unknown'} />
               <Detail label="Era" value={card.era} />
