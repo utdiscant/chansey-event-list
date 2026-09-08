@@ -131,7 +131,7 @@ export default function Home() {
             <p className="filter-label">Pokémon</p>
             <div className="mt-2 flex flex-wrap gap-2">
               {speciesOptions.map((option) => <Button className="rounded-full" key={option} onClick={() => setSpecies(option)} size="sm" variant={species === option ? 'default' : 'outline'}>{option}</Button>)}
-              {species === 'Cameos' && <p className="text-sm text-[#765866]">Confirmed starter checklist. Other languages and No. 1/No. 2 Trainer trophy variants are still being researched. Blissey V uses its existing collection records.</p>}
+              {species === 'Cameos' && <p className="text-sm text-[#765866]">Verified regional printings and 19 trophy event/design categories. Personalised trophies and some regional variants remain unresolved. Blissey V uses its existing records. <a className="underline" href="./cameo-coverage.md" target="_blank" rel="noreferrer">Coverage and open questions</a></p>}
             </div>
           </div>
           <label>
