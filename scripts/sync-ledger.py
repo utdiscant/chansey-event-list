@@ -34,12 +34,21 @@ def main() -> None:
                  year, set_name, number, language, variant
         """
     ).fetchall()
+    # Explicit public allowlist: never export private purchase records with estimates.
+    fields = ('low_eur', 'high_eur', 'low_dkk', 'high_dkk', 'estimate_type',
+              'confidence', 'condition_scope', 'evidence', 'sources', 'checked_on')
+    estimates = {}
+    for ident, payload in connection.execute('SELECT card_id, assessment_json FROM card_price_estimate'):
+        assessment = json.loads(payload)
+        estimates[ident] = {key: assessment[key] for key in fields}
     connection.close()
 
     cards = []
     image_keys = set()
     for row in rows:
         card = dict(row)
+        if card['id'] in estimates:
+            card['price_estimate'] = estimates[card['id']]
         key = card.pop("image_key")
         card["image"] = f"/cards/{key}.jpg" if key else None
         if key:

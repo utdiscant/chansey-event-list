@@ -26,7 +26,15 @@ type SpeciesFilter = 'All' | 'Chansey' | 'Happiny' | 'Blissey' | 'Cameos';
 type View = 'cards' | 'compact';
 type Sort = 'oldest' | 'newest' | 'set' | 'binder';
 
+type PriceEstimate = {
+  low_eur: number | null; high_eur: number | null;
+  low_dkk: number | null; high_dkk: number | null;
+  estimate_type: string; confidence: string; condition_scope: string;
+  evidence: string; sources: { title: string; url: string }[]; checked_on: string;
+};
+
 type CardRecord = {
+  price_estimate?: PriceEstimate;
   id: number;
   species: string;
   cameo?: string | null;
@@ -196,6 +204,7 @@ function CardTile({ card, onOpen }: { card: CardRecord; onOpen: () => void }) {
           <div className="flex shrink-0 flex-col items-end gap-1"><QuantityBadge quantity={card.quantity} /><StatusBadge status={card.status} /><TransitBadge card={card} /></div>
         </div>
         <div className="mt-4"><p className="text-sm font-bold text-[#4d2133]">{card.language}</p><p className="mt-0.5 text-xs leading-5 text-[#8a6976]">{card.variant}{card.rarity ? ` · ${card.rarity}` : ''}</p><BinderPlacement card={card} /></div>
+        <PriceSummary estimate={card.price_estimate} />
       </div>
     </button>
   );
@@ -208,6 +217,7 @@ function CompactRow({ card, onOpen }: { card: CardRecord; onOpen: () => void }) 
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2"><p className="truncate text-sm font-bold text-[#4d2133]">{card.set_name}</p><span className="shrink-0 text-sm font-semibold text-[#765866]">{card.number}</span></div>
         <p className="mt-1 truncate text-xs text-[#8a6976]">{card.species} · {card.language} · {card.variant}{card.year ? ` · ${card.year}` : ''}{card.binder_page ? ` · Binder p${card.binder_page}/s${card.binder_slot}` : ''}</p>
+        <PriceSummary estimate={card.price_estimate} />
       </div>
       <div className="flex items-center gap-2"><QuantityBadge quantity={card.quantity} /><StatusBadge status={card.status} /><TransitBadge card={card} /></div>
     </button>
@@ -243,10 +253,36 @@ function CardDetails({ card, onClose }: { card: CardRecord | null; onClose: () =
               <Detail label="Binder placement" value={binderLabel(card)} />
             </dl>
           </div>
+          {card.price_estimate && <PriceDetails estimate={card.price_estimate} />}
         </DialogContent>
       )}
     </Dialog>
   );
+}
+
+function priceLabel(estimate: PriceEstimate) {
+  if (estimate.estimate_type === 'release_unverified') return 'Printing needs verification';
+  if (estimate.low_dkk === null) return 'Price not established';
+  return `${estimate.low_dkk.toLocaleString('da-DK')}–${estimate.high_dkk?.toLocaleString('da-DK')} kr`;
+}
+
+function PriceSummary({ estimate }: { estimate?: PriceEstimate }) {
+  if (!estimate) return null;
+  return <p className="mt-2 text-xs font-semibold leading-5 text-[#714359]">Fair-price guide · {priceLabel(estimate)}{estimate.low_dkk !== null && <span className="font-normal"> · {estimate.estimate_type === 'provisional' ? 'Provisional' : `${estimate.confidence.split(',')[0].split('.')[0]} confidence`}</span>}</p>;
+}
+
+function PriceDetails({ estimate }: { estimate: PriceEstimate }) {
+  return <section className="rounded-2xl border border-[#e8cbd5] bg-white/70 p-4 text-sm leading-6 text-[#765866]">
+    <h3 className="font-bold text-[#4d2133]">Fair-price guide</h3>
+    <p className="mt-1 text-xl font-bold text-[#4d2133]">{priceLabel(estimate)}</p>
+    {estimate.low_eur !== null && <p>€{estimate.low_eur}–€{estimate.high_eur} · {estimate.confidence}{estimate.estimate_type === 'provisional' ? ' planning allowance, not established market value' : ' confidence'}</p>}
+    <p className="mt-2">{estimate.condition_scope}</p>
+    <p className="mt-2 text-xs">Researched {estimate.checked_on}. Asking prices and reported sales are evidence, not a guarantee of today’s value.</p>
+    <details className="mt-3"><summary className="cursor-pointer font-semibold text-[#4d2133]">Evidence and sources</summary>
+      <p className="mt-2">{estimate.evidence}</p>
+      <ul className="mt-2 list-disc space-y-1 pl-5">{estimate.sources.map((source, index) => <li key={`${source.url}-${index}`}><a className="underline" href={source.url} target="_blank" rel="noreferrer">{source.title}</a></li>)}</ul>
+    </details>
+  </section>;
 }
 
 function Detail({ label, value }: { label: string; value: string | number }) {
@@ -305,7 +341,7 @@ function searchableText(card: CardRecord) {
   return normalize([card.species, card.language, card.set_name, card.set_orig, card.number, card.variant, card.year, card.rarity, card.era, card.binder_page && `binder page ${card.binder_page} slot ${card.binder_slot}`].filter(Boolean).join(' '));
 }
 
-function compareCards(a: CardRecord, b: CardRecord, sort: Sort) {
+function compareCards(a: CardRecord, b: CardRecord, sort: Sort): number {
   if (sort === 'set') return a.set_name.localeCompare(b.set_name) || a.number.localeCompare(b.number) || a.language.localeCompare(b.language);
   if (sort === 'binder') return (a.binder_index ?? Number.MAX_SAFE_INTEGER) - (b.binder_index ?? Number.MAX_SAFE_INTEGER) || compareCards(a, b, 'oldest');
   const direction = sort === 'newest' ? -1 : 1;
